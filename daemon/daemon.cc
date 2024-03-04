@@ -354,12 +354,28 @@ void periodic_update(evutil_socket_t /*fd*/, short /*what*/, void* arg)
     static_cast<tr_daemon*>(arg)->periodic_update();
 }
 
-tr_rpc_callback_status on_rpc_callback(tr_session* /*session*/, tr_rpc_callback_type type, tr_torrent* /*tor*/, void* arg)
+char const* const tr_rpc_callback_type_str[] = {
+    [TR_RPC_TORRENT_ADDED] = "TORRENT_ADDED",
+    [TR_RPC_TORRENT_STARTED] = "TORRENT_STARTED",
+    [TR_RPC_TORRENT_STOPPED] = "TORRENT_STOPPED",
+    [TR_RPC_TORRENT_REMOVING] = "TORRENT_REMOVING",
+    [TR_RPC_TORRENT_TRASHING] = "TORRENT_TRASHING",
+    [TR_RPC_TORRENT_CHANGED] = "TORRENT_CHANGED",
+    [TR_RPC_TORRENT_MOVED] = "TORRENT_MOVED",
+    [TR_RPC_SESSION_CHANGED] = "SESSION_CHANGED",
+    [TR_RPC_SESSION_QUEUE_POSITIONS_CHANGED] = "SESSION_QUEUE_POSITIONS_CHANGED",
+    [TR_RPC_SESSION_CLOSE] = "SESSION_CLOSE",
+};
+
+tr_rpc_callback_status on_rpc_callback(tr_session* /*session*/, tr_rpc_callback_type type, tr_torrent* tor, void* arg)
 {
     if (type == TR_RPC_SESSION_CLOSE)
     {
         static_cast<tr_daemon*>(arg)->stop();
     }
+    std::cout << tr_rpc_callback_type_str[type] << tor->unique_id << "\n";
+    std::flush(std::cout);
+
     return TR_RPC_OK;
 }
 
