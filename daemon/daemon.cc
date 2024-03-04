@@ -369,13 +369,15 @@ char const* const tr_rpc_callback_type_str[] = {
 
 tr_rpc_callback_status on_rpc_callback(tr_session* /*session*/, tr_rpc_callback_type type, tr_torrent* tor, void* arg)
 {
+    tr_daemon* daemon = static_cast<tr_daemon*>(arg);
     if (type == TR_RPC_SESSION_CLOSE)
     {
-        static_cast<tr_daemon*>(arg)->stop();
+        daemon->stop();
     }
-    std::cout << tr_rpc_callback_type_str[type] << tor->unique_id << "\n";
-    std::flush(std::cout);
-
+    tr_stat const* torrent_stat = tr_torrentStat(tor);
+    char message[256];
+    sprintf(message, "%d %d", tr_rpc_callback_type_str[type], torrent_stat->id);
+    printMessage(daemon->log_stream_, TR_LOG_INFO, MyName, message, __FILE__, __LINE__);
     return TR_RPC_OK;
 }
 

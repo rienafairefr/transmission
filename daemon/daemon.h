@@ -41,6 +41,7 @@ public:
     void periodic_update();
     void reconfigure();
     void stop();
+    FILE* log_stream_ = nullptr;
 
 private:
 #ifdef HAVE_SYS_SIGNALFD_H
@@ -53,7 +54,6 @@ private:
     tr_session* my_session_ = nullptr;
     char const* log_file_name_ = nullptr;
     struct event_base* ev_base_ = nullptr;
-    FILE* log_stream_ = nullptr;
 
     bool parse_args(int argc, char const* const* argv, bool* dump_settings, bool* foreground, int* exit_code);
     bool reopen_log_file(char const* filename);
